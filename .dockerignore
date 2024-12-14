@@ -1,0 +1,9 @@
+.local
+.cache
+.git
+.vscode
+.env
+.venv
+.DS_Store
+Dockerfile
+docker-compose.yml
