@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_migrate import Migrate
-from .extensions.extensions import db, jwt, cors, celery, redis_client
-from .config.config import Config
-from .auth.models import User
+from backend.extensions.extensions import db, jwt, cors, celery
+from backend.config.config import Config
+from backend.auth.models import User
 import logging
 import os
 
@@ -91,8 +91,8 @@ def create_app(config_class=Config):
             app.logger.info('Database tables created')
     
     # Register blueprints
-    from .api.routes import api_bp
-    from .auth.routes import auth_bp
+    from backend.api.routes import api_bp
+    from backend.auth.routes import auth_bp
     
     app.register_blueprint(api_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/auth')
