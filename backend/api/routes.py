@@ -4,7 +4,8 @@ from backend.extensions.extensions import db, redis_client
 from backend.auth.models import User
 import json
 import logging
-from backend.tasks.compute_user_stats import test_redis_celery, compute_user_stats
+from backend.tasks.compute_user_stats import compute_user_stats
+from backend.tasks.test_redis_celery import test_redis_celery
 
 logger = logging.getLogger(__name__)
 api_bp = Blueprint('api', __name__)

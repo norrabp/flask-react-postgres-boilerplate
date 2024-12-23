@@ -6,7 +6,7 @@ case "$1" in
         exec python run.py
         ;;
     "celery")
-        exec celery -A backend.celery_worker.celery worker --loglevel=info
+        exec celery -A backend.celery.celery_worker.celery worker --loglevel=info
         ;;
     *)
         exec "$@"

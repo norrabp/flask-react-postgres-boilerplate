@@ -19,7 +19,7 @@ def create_app(config_class=Config):
     
     # Initialize extensions with app
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(app, db, directory='backend/migrations')
     jwt.init_app(app)
     
     # Configure CORS with proper headers
