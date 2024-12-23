@@ -1,33 +1,10 @@
 from datetime import datetime, timedelta
-from celery import Celery
 import json
 import logging
-from .extensions import redis_client, celery
-from .models import User
-from .extensions import db
+from backend.extensions.extensions import redis_client, celery
+from backend.auth.models import User
 
 logger = logging.getLogger(__name__)
-
-@celery.task
-def test_redis_celery():
-    """Test task to verify Redis and Celery are working"""
-    current_time = datetime.utcnow().isoformat()
-    logger.info(f"Test task executed at {current_time}")
-    return f"Task completed successfully at {current_time}"
-
-@celery.task
-def cleanup_inactive_users():
-    """Cleanup inactive users (dry run - logs only)"""
-    try:
-        inactive_users = User.query.filter_by(is_active=False).all()
-        logger.info(f"Found {len(inactive_users)} inactive users")
-        # Log instead of delete for safety
-        for user in inactive_users:
-            logger.info(f"Would clean up inactive user: {user.username}")
-        return f"Found {len(inactive_users)} inactive users"
-    except Exception as e:
-        logger.error(f"Error in cleanup task: {str(e)}")
-        return str(e)
 
 @celery.task
 def compute_user_stats():

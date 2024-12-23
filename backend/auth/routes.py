@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from .models import User
-from .app import db
+from backend.auth.models import User
+from backend.app import db
 import logging
 
 logger = logging.getLogger(__name__)

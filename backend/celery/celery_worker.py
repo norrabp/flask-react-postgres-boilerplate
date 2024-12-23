@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend.app import create_app
-from backend.extensions import celery
+from backend.extensions.extensions import celery
 
 flask_app = create_app()
 flask_app.app_context().push()

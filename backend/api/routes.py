@@ -1,11 +1,10 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
-from ..extensions import db, redis_client
-from ..models import User
-from datetime import datetime, timedelta
+from backend.extensions.extensions import db, redis_client
+from backend.auth.models import User
 import json
 import logging
-from ..tasks import test_redis_celery, compute_user_stats
+from backend.tasks.compute_user_stats import test_redis_celery, compute_user_stats
 
 logger = logging.getLogger(__name__)
 api_bp = Blueprint('api', __name__)

@@ -1,6 +1,6 @@
 import pytest
 from backend.app import create_app, db
-from backend.models import User
+from backend.auth.models import User
 
 @pytest.fixture
 def app():

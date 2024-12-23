@@ -1,5 +1,4 @@
-import pytest
-from backend.models import User
+from backend.auth.models import User
 
 def test_register(client):
     response = client.post('/auth/register', json={
