@@ -1,0 +1,11 @@
+{
+    "python.formatting.provider": "black",
+    "editor.rulers": [120],
+    "python.formatting.blackArgs": ["--line-length=120"],
+    "python.linting.flake8Args": ["--max-line-length=120"],
+    "python.linting.pycodestyleArgs": ["--max-line-length=120"],
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.python"
+    }
+}
