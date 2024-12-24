@@ -4,6 +4,7 @@ from backend.util.pagination import get_pagination
 from typing import List, Optional
 from backend.types.get_request import FilterInfo, SortInfo, PaginationInfo
 from datetime import datetime
+from sqlalchemy.orm import Query
 import uuid
 
 
@@ -43,8 +44,19 @@ class Model(db.Model):
         sort: Optional[SortInfo] = None,
         pagination: Optional[PaginationInfo] = None,
         with_deleted: bool = False
+    ) -> List['Model']:
+        query = cls.get_list_query_obj(filter, sort, with_deleted)
+        return query.all()
+    
+    @classmethod
+    def get_list_and_paginate(
+        cls,
+        filter: Optional[FilterInfo] = None,
+        sort: Optional[SortInfo] = None,
+        pagination: Optional[PaginationInfo] = None,
+        with_deleted: bool = False
     ) -> tuple[List['Model'], bool]:
-        query, has_next_page = cls.get_list_query_obj(filter, sort, pagination, with_deleted)
+        query, has_next_page = cls.get_list_and_paginate_query_obj(filter, sort, pagination, with_deleted)
         return query.all(), has_next_page
 
     
@@ -53,11 +65,9 @@ class Model(db.Model):
         cls,
         filter: Optional[FilterInfo] = None,
         sort: Optional[SortInfo] = None,
-        pagination: Optional[PaginationInfo] = None,
         with_deleted: bool = False
-    ) -> tuple[List['Model'], bool]:
+    ) -> Query:
         query = cls.query
-        pagination = get_pagination(pagination)
         if not with_deleted:
             query = query.filter_by(deleted_at=None)
         if filter:
@@ -68,6 +78,18 @@ class Model(db.Model):
                 query = query.order_by(
                     column_attr.desc() if direction == 'desc' else column_attr.asc()
                 )
+        return query
+
+    @classmethod
+    def get_list_and_paginate_query_obj(
+        cls,
+        filter: Optional[FilterInfo] = None,
+        sort: Optional[SortInfo] = None,
+        pagination: Optional[PaginationInfo] = None,
+        with_deleted: bool = False
+    ) -> tuple[Query, bool]:
+        pagination = get_pagination(pagination)
+        query = cls.get_list_query_obj(filter, sort, with_deleted)
 
         total_count = query.count()
         query = query.limit(pagination.page_size).offset(
@@ -78,17 +100,19 @@ class Model(db.Model):
             pagination.page_size * pagination.page + pagination.offset
         )
     
-    def get_or_create(self, filter: Optional[FilterInfo] = None, commit: bool = True):
-        query = self.query.filter_by(**filter).first()
-        if not query:
-            self.create(commit)
-        return query
+    @classmethod
+    def get_or_create(cls, filter: Optional[FilterInfo] = None, commit: bool = True):
+        obj = cls.query.filter_by(**filter).first()
+        if not obj:
+            obj = cls.create(commit)
+        return obj
     
-    def update_or_create(self, filter: Optional[FilterInfo] = None, commit: bool = True):
-        query = self.query.filter_by(**filter).first()
-        if not query:
-            self.create(commit)
+    @classmethod
+    def update_or_create(cls, filter: Optional[FilterInfo] = None, commit: bool = True):
+        obj = cls.query.filter_by(**filter).first()
+        if not obj:
+            obj = cls.create(commit)
         else:
-            self.update(commit)
-        return query
+            obj = cls.update(commit)
+        return
     
