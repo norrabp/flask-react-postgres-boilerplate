@@ -12,7 +12,7 @@ def test_register(client):
 def test_register_duplicate_email(client, test_user):
     response = client.post('/auth/register', json={
         'username': 'another',
-        'email': 'test@example.com',
+        'email': 'unittesting@example.com',
         'password': 'TestUser@2024Secure!'
     })
     assert response.status_code == 400
@@ -20,7 +20,7 @@ def test_register_duplicate_email(client, test_user):
 
 def test_login_success(client, test_user):
     response = client.post('/auth/login', json={
-        'email': 'test@example.com',
+        'email': 'unittesting@example.com',
         'password': 'TestUser@2024Secure!'
     })
     assert response.status_code == 200

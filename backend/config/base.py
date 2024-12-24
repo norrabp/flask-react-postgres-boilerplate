@@ -1,7 +1,7 @@
 import os
 from datetime import timedelta
 
-class Config:
+class BaseConfig:
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'dev_key')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', '')
     if SQLALCHEMY_DATABASE_URI:

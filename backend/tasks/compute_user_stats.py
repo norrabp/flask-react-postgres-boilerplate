@@ -11,16 +11,16 @@ def compute_user_stats():
     """Compute user statistics and cache them in Redis"""
     try:
         total_users = User.query.count()
-        active_users = User.query.filter_by(is_active=True).count()
+        active_users = User.query.filter_by(deleted_at=None).count()
         recent_users = User.query.filter(
-            User.created_at >= datetime.utcnow() - timedelta(days=7)
+            User.created_at >= datetime.now() - timedelta(days=7)
         ).count()
         
         stats = {
             "total_users": total_users,
             "active_users": active_users,
             "recent_users": recent_users,
-            "computed_at": datetime.utcnow().isoformat()
+            "computed_at": datetime.now().isoformat()
         }
         
         # Cache the stats in Redis

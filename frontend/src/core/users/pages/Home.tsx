@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { User } from '@core/users/types/user';
 import api from '@services/api';
+import StatsCard from '@core/users/components/StatsCard';
+import UserCard from '@core/users/components/UserCard';
 
 const Home: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -18,7 +20,7 @@ const Home: React.FC = () => {
           api.get('/api/users'),
           api.get('/api/stats')
         ]);
-        setUsers(usersResponse.data);
+        setUsers(usersResponse.data.users);
         
         if (statsResponse.data.task_id) {
           // Poll for task completion
@@ -60,37 +62,12 @@ const Home: React.FC = () => {
       <h1>Welcome</h1>
       
       {stats && (
-        <div className="card bg-dark mb-4">
-          <div className="card-body">
-            <h5 className="card-title">System Statistics</h5>
-            <div className="row">
-              <div className="col-md-4">
-                <p className="mb-1">Total Users:</p>
-                <h3>{stats.total_users || stats.message}</h3>
-              </div>
-              <div className="col-md-4">
-                <p className="mb-1">Active Users:</p>
-                <h3>{stats.active_users || 'Computing...'}</h3>
-              </div>
-              <div className="col-md-4">
-                <p className="mb-1">Recent Users:</p>
-                <h3>{stats.recent_users || 'Computing...'}</h3>
-              </div>
-            </div>
-          </div>
-        </div>
+        <StatsCard stats={stats} />
       )}
 
       <div className="row mt-4">
         {users.map(user => (
-          <div key={user.id} className="col-md-4 mb-3">
-            <div className="card bg-dark">
-              <div className="card-body">
-                <h5 className="card-title">{user.username}</h5>
-                <p className="card-text">{user.email}</p>
-              </div>
-            </div>
-          </div>
+          <UserCard user={user} />
         ))}
       </div>
     </div>

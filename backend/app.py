@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 from backend.extensions.extensions import db, jwt, cors, celery
-from backend.config.config import Config
+from backend.config.environment import CONFIG, ENVIRONMENT, Environment
 from backend.auth.models import User
 import logging
 import os
@@ -9,7 +9,7 @@ import os
 # Initialize migrations
 migrate = Migrate()
 
-def create_app(config_class=Config):
+def create_app(config_class=CONFIG):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
@@ -73,16 +73,17 @@ def create_app(config_class=Config):
     with app.app_context():
         try:
             db.create_all()
-            # Create test user if it doesn't exist
-            test_user = User.query.filter_by(email='test@example.com').first()
-            if not test_user:
-                test_user = User(username='testuser', email='test@example.com')
-                test_user.set_password('TestUser@2024Secure!')
-                db.session.add(test_user)
-                db.session.commit()
-                app.logger.info('Test user created successfully')
-            else:
-                app.logger.info('Test user already exists')
+            if ENVIRONMENT == Environment.DEVELOPMENT:
+                # Create test user if it doesn't exist
+                test_user = User.query.filter_by(email='test@example.com').first()
+                if not test_user:
+                    test_user = User(username='testuser', email='test@example.com')
+                    test_user.set_password('TestUser@2024Secure!')
+                    db.session.add(test_user)
+                    db.session.commit()
+                    app.logger.info('Test user created successfully')
+                else:
+                    app.logger.info('Test user already exists')
         except Exception as e:
             app.logger.error(f'Database initialization error: {str(e)}')
             db.session.rollback()  # Rollback on error
