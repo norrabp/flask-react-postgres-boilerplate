@@ -71,7 +71,22 @@ class Model(db.Model):
         if not with_deleted:
             query = query.filter_by(deleted_at=None)
         if filter:
-            query = query.filter_by(**filter)
+            for key, value in filter.items():
+                if isinstance(value, dict):
+                    # Handle operators like $gte, $lt, etc.
+                    for op, op_value in value.items():
+                        column = getattr(cls, key)
+                        if op == '$gte':
+                            query = query.filter(column >= op_value)
+                        elif op == '$gt':
+                            query = query.filter(column > op_value)
+                        elif op == '$lt':
+                            query = query.filter(column < op_value)
+                        elif op == '$lte':
+                            query = query.filter(column <= op_value)
+                else:
+                    # Handle simple equality
+                    query = query.filter_by(**{key: value})
         if sort:
             for column, direction in sort.items():
                 column_attr = getattr(cls, column)
